@@ -3,12 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Text Editor</title>
+    <title>Collaborative Notepad</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <textarea id="editor" placeholder="Start typing..."></textarea>
-    <div id="status">Waiting for updates...</div>
-    <script src="script.js"></script>
+    <div class="container">
+        <textarea id="notepad" placeholder="Start typing here..."></textarea>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
 </body>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCg_B5JeC7vJps33OSFkV5QW3ZjtsbCA8c",
+      authDomain: "mamunotepad.firebaseapp.com",
+      projectId: "mamunotepad",
+      storageBucket: "mamunotepad.appspot.com",
+      messagingSenderId: "553410626492",
+      appId: "1:553410626492:web:b63790357944965eeb61b9",
+      measurementId: "G-6HLD49FN0P"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Get a reference to the database
+    const database = firebase.database();
+    const notepadRef = database.ref('notepad');
+
+    // Get the textarea element
+    const textarea = document.getElementById('notepad');
+
+    // Listen for changes in the database
+    notepadRef.on('value', (snapshot) => {
+        const text = snapshot.val();
+        if (text !== null) {
+            textarea.value = text;
+        }
+    });
+
+    // Update the database when the user types
+    textarea.addEventListener('input', () => {
+        notepadRef.set(textarea.value);
+    });
+  </script>
+
 </html>
