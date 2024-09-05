@@ -1,6 +1,6 @@
 const editor = document.getElementById('editor');
 const status = document.getElementById('status');
-const socket = new WebSocket('wss://mamunotepad.onrender.com'); // Replace with your WebSocket server URL
+const socket = new WebSocket('https://mamunotepad.onrender.com/'); // Replace with your WebSocket server URL
 
 let debounceTimeout;
 editor.addEventListener('input', () => {
