@@ -27,3 +27,7 @@ socket.addEventListener('close', () => {
 socket.addEventListener('error', () => {
     status.textContent = 'Error connecting to server.';
 });
+
+
+
+

@@ -11,6 +11,7 @@ const wss = new WebSocket.Server({ noServer: true });
 let documentContent = '';
 
 wss.on('connection', ws => {
+    console.log('New WebSocket connection');
     ws.on('message', message => {
         documentContent = message;
         wss.clients.forEach(client => {
