@@ -1,6 +1,6 @@
 const editor = document.getElementById('editor');
-const saveBtn = document.getElementById('saveBtn');
-const socket = new WebSocket('ws://localhost:8080'); // Replace with your server URL
+const status = document.getElementById('status');
+const socket = new WebSocket('wss://mamunotepad.onrender.com'); // Replace with your WebSocket server URL
 
 let debounceTimeout;
 editor.addEventListener('input', () => {
@@ -11,22 +11,19 @@ editor.addEventListener('input', () => {
 });
 
 socket.addEventListener('message', (event) => {
-    editor.value = event.data;
+    const receivedText = event.data;
+    editor.value = receivedText;
+    status.textContent = 'Document updated by another user!';
 });
 
-saveBtn.addEventListener('click', () => {
-    const text = editor.value;
-    fetch('/save', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text })
-    }).then(response => {
-        if (response.ok) {
-            alert('Document saved!');
-        } else {
-            alert('Failed to save document.');
-        }
-    });
+socket.addEventListener('open', () => {
+    status.textContent = 'Connected to server.';
+});
+
+socket.addEventListener('close', () => {
+    status.textContent = 'Disconnected from server.';
+});
+
+socket.addEventListener('error', () => {
+    status.textContent = 'Error connecting to server.';
 });

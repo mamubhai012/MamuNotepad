@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080; // Use environment port for deployment
 const wss = new WebSocket.Server({ noServer: true });
 
 let documentContent = '';
@@ -29,7 +29,7 @@ app.post('/save', (req, res) => {
 });
 
 const server = app.listen(port, () => {
-    console.log(`Server is listening on https://mamubhai012.github.io/MamuNotepad/`);
+    console.log(`Server is listening on http://localhost:${port}`);
 });
 
 server.on('upgrade', (request, socket, head) => {
