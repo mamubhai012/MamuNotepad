@@ -1,9 +1,18 @@
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const port = 8080;
+const wss = new WebSocket.Server({ noServer: true });
+
+let documentContent = '';
 
 wss.on('connection', ws => {
     ws.on('message', message => {
-        // Broadcast message to all clients
+        documentContent = message;
         wss.clients.forEach(client => {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(message);
@@ -12,4 +21,19 @@ wss.on('connection', ws => {
     });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+app.use(bodyParser.json());
+app.post('/save', (req, res) => {
+    documentContent = req.body.text;
+    fs.writeFileSync(path.join(__dirname, 'document.txt'), documentContent);
+    res.sendStatus(200);
+});
+
+const server = app.listen(port, () => {
+    console.log(`Server is listening on https://mamubhai012.github.io/MamuNotepad/`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, ws => {
+        wss.emit('connection', ws, request);
+    });
+});
